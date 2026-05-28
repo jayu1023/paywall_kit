@@ -4,7 +4,7 @@ Living document. Update at the end of every working session.
 
 **Source of truth for:** What's done, what's in flight, what's blocked, current velocity.
 
-**Last updated:** 2026-05-28 (Phase 6 done — Phase 7 next)
+**Last updated:** 2026-05-28 (Phase 7 done — Phase 8 next)
 
 ---
 
@@ -12,15 +12,15 @@ Living document. Update at the end of every working session.
 
 | Metric | Value |
 |---|---|
-| Current phase | Phase 7 — Example App + Marketing Assets ⚪ Next |
-| Phase progress | 7 / 10 phases complete |
-| Days elapsed | 1.2 |
-| Days remaining (est.) | ~2–3 |
+| Current phase | Phase 8 — Tests + Documentation ⚪ Next |
+| Phase progress | 8 / 10 phases complete |
+| Days elapsed | 1.3 |
+| Days remaining (est.) | ~1.5 |
 | Target ship date | 🚀 Earliest: 2026-06-07 · ⛔ Must-ship-by: 2026-06-11 |
-| 🔴 features done | 30 / ~50 (variants + adapters + polish + RTL all done) |
+| 🔴 features done | 33 / ~50 (variants + adapters + polish + RTL + example + README) |
 | Test coverage | 85 tests passing |
-| Open blockers | None |
-| Commits | 8 |
+| Open blockers | None code-side. User-side: GIF recording, GitHub Pages deploy |
+| Commits | 9 |
 
 ---
 
@@ -35,8 +35,8 @@ Living document. Update at the end of every working session.
 | 4 | Variants 9–12 (Minimal, Storytelling, Gamified, Reverse) | 🟢 Done | 2026-05-28 | 2026-05-28 | 0.1 | 6 / 6 | — |
 | 5 | Backend Adapters (IAP + RevenueCat) | 🟢 Done | 2026-05-28 | 2026-05-28 | 0.2 | 6 / 6 | — |
 | 6 | L10n + Animation Polish | 🟢 Done | 2026-05-28 | 2026-05-28 | 0.15 | 5 / 5 | — |
-| 7 | Example App + Marketing Assets | ⚪ Not started | — | — | 1 | 0 / 4 | — |
-| 8 | Tests + Documentation | ⚪ Not started | — | — | 1 | 0 / 6 | Phase 7 |
+| 7 | Example App + Marketing Assets | 🟢 Code-side done | 2026-05-28 | 2026-05-28 | 0.1 | 2 / 4* | * GIF + screenshots are manual |
+| 8 | Tests + Documentation | ⚪ Not started | — | — | 1 | 0 / 6 | — |
 | 9 | Publish | ⚪ Not started | — | — | 0.5 | 0 / 6 | Phase 8 |
 
 **Legend:** ⚪ Not started · 🟡 In progress · 🟢 Done · 🔴 Blocked · ⚫ Skipped
@@ -243,9 +243,24 @@ Living document. Update at the end of every working session.
 
 ---
 
-## Phase 7 — Example App + Marketing Assets ⚪ NOT STARTED
+## Phase 7 — Example App + Marketing Assets 🟢 CODE-SIDE DONE
 
-(Tasks copied from PHASES.md when phase starts.)
+**Goal:** Public-facing example app + the launch GIF.
+
+| Task | Status | Notes |
+|---|---|---|
+| `example/lib/main.dart` — grid screen showing all 12 variants | 🟢 | Material 3, 4×3 GridView, tap-to-launch, SnackBar describes result |
+| Build example for web | 🟢 | `flutter build web --release` ✓ (15 s, fonts tree-shaken 99.4%) |
+| Record launch GIF (3-sec auto-scroll) | ⚪ | **User-side action** — run the example, screen-record the grid + 1–2 variant taps |
+| Take screenshots for `pubspec.yaml` `screenshots:` field | ⚪ | **User-side action** — capture 12 stills from the example app |
+| Production README rewrite | 🟢 | Lead with snippet, 12-variant table, adapter table, comparison vs `purchases_ui_flutter` |
+
+**Phase 7 verification (DoD):**
+- ✅ Example builds for iOS + Android + Web (verified web build)
+- ⚪ GIF recorded (user action)
+
+**Features delivered:** F-DOC-02 (example app), F-DOC-01 (README hero)
+**User-side handoff:** GIF recording + screenshots + GitHub Pages deploy
 
 ---
 
@@ -272,3 +287,4 @@ Living document. Update at the end of every working session.
 - **2026-05-28 (PM)** — **Phase 4 complete** in ~50 min (vs 2-day estimate). Built final 4 variants (Minimal, Storytelling, Gamified, ReverseTrial) and made the router switch exhaustive. Added `PaywallTestimonial` model + `testimonials` and `socialProof` fields to PaywallCopy (additive). **68 tests passing**, analyzer 0 issues. 🎉 **All 12 variants live.** **Next:** Phase 5 — Backend Adapters (IAP + RevenueCat + Custom). ~2 days estimate.
 - **2026-05-28 (PM)** — **Phase 5 complete** in ~1.5 hrs (vs 2-day estimate). Built the adapter layer: abstract `PaywallAdapter`, default `PreviewAdapter` (no-op), `IapAdapter` wrapping `in_app_purchase`, `PaywallScope` InheritedWidget. Made `PaywallPrimaryButton` + `PaywallRestoreButton` async w/ spinners. Updated all 12 variants to dispatch buy via the adapter. Wrote `docs/ADAPTERS.md` with full RC recipe + Stripe skeleton + FakeAdapter test pattern. **73 tests passing**, analyzer 0 issues. **Next:** Phase 6 — L10n + Animation Polish. ~1.5 days estimate.
 - **2026-05-28 (PM)** — **Phase 6 complete** in ~30 min (vs 1.5-day estimate). Took two failed wrap-per-variant attempts in carousel + comparison, then pivoted to a one-edit router-level `PaywallEntrance` that animates every variant uniformly. Added selection-state `AnimatedContainer` to the 3 selector-based variants. Wrote `test/rtl_test.dart` covering all 12 variants in Arabic + `Directionality.rtl`. **Scope-cut** skeleton loaders (no async product fetch yet) and confetti (dep weight, not conversion-moving) to v0.2. **85 tests passing**, analyzer 0 issues. **Next:** Phase 7 — Example App + Marketing Assets (variant grid, launch GIF). ~1 day estimate.
+- **2026-05-28 (PM)** — **Phase 7 code-side done** in ~30 min (vs 1-day estimate). Scaffolded `example/` with `flutter create`, wrote `example/lib/main.dart` — a Material 3 `GridView` of 12 `_VariantCard`s with realistic Product/Copy/Theme data and SnackBar result feedback. Verified `flutter build web --release` succeeds. Replaced the placeholder package README with the production version: hero snippet, install block, full variant table, adapter table, comparison vs `purchases_ui_flutter`. **GIF recording + screenshots + GitHub Pages deploy are user-side** (manual). **Next:** Phase 8 — Tests + Documentation (dartdoc polish, CHANGELOG `[0.1.0]`, CI workflow). ~1 day estimate.
