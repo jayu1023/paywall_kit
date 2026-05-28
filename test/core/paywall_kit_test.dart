@@ -16,26 +16,23 @@ const _copy = PaywallCopy(
 );
 
 void main() {
-  group('PaywallKit.show — Phase 1 skeleton', () {
-    testWidgets('fires onView and onDismiss, returns PaywallDismissed',
+  group('PaywallKit.show', () {
+    testWidgets('fires onView synchronously then awaits user interaction',
         (tester) async {
       var viewed = 0;
-      var dismissed = 0;
-      late PaywallResult result;
-
+      late Future<PaywallResult> pending;
       await tester.pumpWidget(
         MaterialApp(
           home: Builder(
             builder: (context) {
               return ElevatedButton(
-                onPressed: () async {
-                  result = await PaywallKit.show(
+                onPressed: () {
+                  pending = PaywallKit.show(
                     context,
                     variant: PaywallVariant.minimal,
                     products: const [_product],
                     copy: _copy,
                     onView: () => viewed++,
-                    onDismiss: () => dismissed++,
                   );
                 },
                 child: const Text('show'),
@@ -44,13 +41,17 @@ void main() {
           ),
         ),
       );
-
       await tester.tap(find.text('show'));
-      await tester.pump();
+      await tester.pumpAndSettle();
 
+      // onView fires immediately when the route is pushed.
       expect(viewed, equals(1));
-      expect(dismissed, equals(1));
-      expect(result, isA<PaywallDismissed>());
+
+      // Close the placeholder coming-soon route so the future resolves.
+      await tester.tap(find.byIcon(Icons.close));
+      await tester.pumpAndSettle();
+
+      expect(await pending, isA<PaywallDismissed>());
     });
 
     testWidgets('asserts on empty products list', (tester) async {
@@ -81,6 +82,33 @@ void main() {
       await tester.tap(find.text('show'));
       await tester.pump();
       expect(caught, isA<AssertionError>());
+    });
+
+    testWidgets('unimplemented variant shows "coming soon" placeholder',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) {
+              return ElevatedButton(
+                onPressed: () {
+                  PaywallKit.show(
+                    context,
+                    variant: PaywallVariant.gamified,
+                    products: const [_product],
+                    copy: _copy,
+                  );
+                },
+                child: const Text('show'),
+              );
+            },
+          ),
+        ),
+      );
+      await tester.tap(find.text('show'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('coming soon'), findsOneWidget);
     });
   });
 }
