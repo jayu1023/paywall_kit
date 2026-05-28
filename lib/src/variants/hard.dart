@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../adapters/paywall_scope.dart';
 import '../core/paywall_copy.dart';
 import '../core/paywall_kit.dart';
 import '../core/paywall_product.dart';
@@ -40,10 +41,14 @@ class HardPaywallVariant extends StatelessWidget {
         orElse: () => products.first,
       );
 
-  void _onContinue(BuildContext context) {
+  Future<void> _onContinue(BuildContext context) async {
+    final navigator = Navigator.of(context);
+    final adapter = PaywallScope.of(context).adapter;
     final product = _selected;
     onCtaTap?.call(product);
-    Navigator.of(context).pop(PaywallPurchased(product: product));
+    final result = await adapter.buy(product);
+    if (!context.mounted) return;
+    navigator.pop(result);
   }
 
   @override

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../adapters/paywall_scope.dart';
 import '../core/paywall_copy.dart';
 import '../core/paywall_kit.dart';
 import '../core/paywall_period.dart';
 import '../core/paywall_product.dart';
-import '../core/paywall_result.dart';
 import '../core/price_formatter.dart';
 import '../theme/paywall_theme.dart';
 import '_common.dart';
@@ -67,9 +67,14 @@ class _TrialToggleVariantState extends State<TrialToggleVariant> {
     );
   }
 
-  void _onContinue() {
-    widget.onCtaTap?.call(_selected);
-    Navigator.of(context).pop(PaywallPurchased(product: _selected));
+  Future<void> _onContinue() async {
+    final navigator = Navigator.of(context);
+    final adapter = PaywallScope.of(context).adapter;
+    final product = _selected;
+    widget.onCtaTap?.call(product);
+    final result = await adapter.buy(product);
+    if (!mounted) return;
+    navigator.pop(result);
   }
 
   String _ctaLabel() {

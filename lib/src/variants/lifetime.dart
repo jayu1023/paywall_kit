@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../adapters/paywall_scope.dart';
 import '../core/paywall_copy.dart';
 import '../core/paywall_kit.dart';
 import '../core/paywall_period.dart';
 import '../core/paywall_product.dart';
-import '../core/paywall_result.dart';
 import '../core/price_formatter.dart';
 import '../theme/paywall_theme.dart';
 import '_common.dart';
@@ -62,9 +62,14 @@ class LifetimeVariant extends StatelessWidget {
     );
   }
 
-  void _onContinue(BuildContext context) {
-    onCtaTap?.call(_lifetime);
-    Navigator.of(context).pop(PaywallPurchased(product: _lifetime));
+  Future<void> _onContinue(BuildContext context) async {
+    final navigator = Navigator.of(context);
+    final adapter = PaywallScope.of(context).adapter;
+    final product = _lifetime;
+    onCtaTap?.call(product);
+    final result = await adapter.buy(product);
+    if (!context.mounted) return;
+    navigator.pop(result);
   }
 
   @override

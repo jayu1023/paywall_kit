@@ -2,10 +2,11 @@
 ///
 /// Backend-agnostic: works with `in_app_purchase` (native, free) or
 /// RevenueCat via the same single-flag config.
-///
-/// Public exports are added per-phase as features ship. See PHASES.md.
 library;
 
+export 'src/adapters/iap_adapter.dart';
+export 'src/adapters/paywall_adapter.dart';
+export 'src/adapters/preview_adapter.dart';
 export 'src/core/paywall_copy.dart';
 export 'src/core/paywall_kit.dart';
 export 'src/core/paywall_period.dart';

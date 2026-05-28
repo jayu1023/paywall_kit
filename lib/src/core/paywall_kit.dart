@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../adapters/paywall_adapter.dart';
+import '../adapters/paywall_scope.dart';
+import '../adapters/preview_adapter.dart';
 import '../theme/paywall_theme.dart';
 import '../variants/carousel.dart';
 import '../variants/comparison.dart';
@@ -45,13 +48,19 @@ class PaywallKit {
   /// restores, dismisses, or the purchase fails. The optional callbacks
   /// fire alongside the returned value.
   ///
-  /// All 12 variants are implemented as of Phase 4.
+  /// [adapter] controls the purchase backend. Defaults to a
+  /// [PreviewAdapter] which "buys" instantly without contacting any
+  /// store — useful for design / preview / when you handle real
+  /// purchases inside `onCtaTap` yourself. Pass [IapAdapter] for native
+  /// `in_app_purchase`, or implement [PaywallAdapter] for RevenueCat /
+  /// Stripe / your-own.
   static Future<PaywallResult> show(
     BuildContext context, {
     required PaywallVariant variant,
     required List<PaywallProduct> products,
     required PaywallCopy copy,
     PaywallTheme? theme,
+    PaywallAdapter? adapter,
     PaywallViewCallback? onView,
     PaywallCtaCallback? onCtaTap,
     PaywallPurchaseSuccessCallback? onPurchaseSuccess,
@@ -64,16 +73,20 @@ class PaywallKit {
     );
 
     final activeTheme = theme ?? PaywallTheme.fromTheme(context);
+    final activeAdapter = adapter ?? const PreviewAdapter();
     onView?.call();
 
     final result = await Navigator.of(context).push<PaywallResult>(
       MaterialPageRoute<PaywallResult>(
-        builder: (_) => _PaywallRouter(
-          variant: variant,
-          products: products,
-          copy: copy,
-          theme: activeTheme,
-          onCtaTap: onCtaTap,
+        builder: (_) => PaywallScope(
+          adapter: activeAdapter,
+          child: _PaywallRouter(
+            variant: variant,
+            products: products,
+            copy: copy,
+            theme: activeTheme,
+            onCtaTap: onCtaTap,
+          ),
         ),
         fullscreenDialog: true,
       ),
@@ -88,8 +101,9 @@ class PaywallKit {
       case PaywallDismissed():
         onDismiss?.call();
       case PaywallRestored():
-        // Restore-purchase plumbing lands with the adapter work in
-        // Phase 5; for now the result type round-trips through the API.
+        // Restore-purchase plumbing lives in the adapter contract; the
+        // returned PaywallRestored carries the list of restored
+        // products if the caller wants to surface them.
         break;
     }
     return outcome;
