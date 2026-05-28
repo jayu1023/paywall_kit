@@ -4,7 +4,7 @@ Living document. Update at the end of every working session.
 
 **Source of truth for:** What's done, what's in flight, what's blocked, current velocity.
 
-**Last updated:** 2026-05-28 (Phase 0 done — Phase 1 next)
+**Last updated:** 2026-05-28 (Phase 1 done — Phase 2 next)
 
 ---
 
@@ -12,15 +12,15 @@ Living document. Update at the end of every working session.
 
 | Metric | Value |
 |---|---|
-| Current phase | Phase 1 — Core API + Theme ⚪ Next |
-| Phase progress | 1 / 10 phases complete |
-| Days elapsed | 0.25 |
-| Days remaining (est.) | ~10–14 |
+| Current phase | Phase 2 — Variants 1–4 ⚪ Next |
+| Phase progress | 2 / 10 phases complete |
+| Days elapsed | 0.5 |
+| Days remaining (est.) | ~10–13 |
 | Target ship date | 🚀 Earliest: 2026-06-07 · ⛔ Must-ship-by: 2026-06-11 |
-| 🔴 features done | 0 / ~50 (scaffolding only) |
-| Test coverage | 1 placeholder test |
+| 🔴 features done | 7 / ~50 (core API + theme locked) |
+| Test coverage | 33 tests passing |
 | Open blockers | None |
-| Commits | 1 |
+| Commits | 3 |
 
 ---
 
@@ -29,8 +29,8 @@ Living document. Update at the end of every working session.
 | # | Phase | Status | Start | End | Days | Tasks done | Blocker |
 |---|---|---|---|---|---|---|---|
 | 0 | Foundation | 🟢 Done | 2026-05-28 | 2026-05-28 | 0.25 | 9 / 9 | — |
-| 1 | Core API + Theme | ⚪ Not started | — | — | 1 | 0 / 7 | — |
-| 2 | Variants 1–4 (Carousel, Comparison, Trial, Lifetime) | ⚪ Not started | — | — | 2.5 | 0 / 6 | Phase 1 |
+| 1 | Core API + Theme | 🟢 Done | 2026-05-28 | 2026-05-28 | 0.25 | 7 / 7 | — |
+| 2 | Variants 1–4 (Carousel, Comparison, Trial, Lifetime) | ⚪ Not started | — | — | 2.5 | 0 / 6 | — |
 | 3 | Variants 5–8 (Soft, Hard, Win-back, Family) | ⚪ Not started | — | — | 2 | 0 / 5 | Phase 2 |
 | 4 | Variants 9–12 (Minimal, Storytelling, Gamified, Reverse) | ⚪ Not started | — | — | 2 | 0 / 6 | Phase 3 |
 | 5 | Backend Adapters (IAP + RevenueCat) | ⚪ Not started | — | — | 2 | 0 / 6 | Phase 4 |
@@ -75,11 +75,29 @@ Living document. Update at the end of every working session.
 
 ---
 
-## Phase 1 — Core API + Theme ⚪ NOT STARTED
+## Phase 1 — Core API + Theme 🟢 COMPLETE
 
 **Goal:** `PaywallProduct`, `PaywallCopy`, `PaywallTheme`, `PaywallResult` data classes locked.
 
-(Tasks copied from PHASES.md when phase starts.)
+| Task | Status | Notes |
+|---|---|---|
+| `PaywallProduct` (id, price, displayPrice, period, perks, trial, original, badge) | 🟢 | Structural equality, hashCode, toString |
+| `PaywallCopy` (headline, subhead, features, ctas, restoreText, finePrint, policy URLs) | 🟢 | Defaults: `'Continue'`, `'Restore Purchases'` |
+| `PaywallTheme.brand(primary, accent?, brightness?)` + `.fromTheme(context)` | 🟢 | onPrimary derived via relative luminance |
+| `PaywallResult` sealed union (Purchased / Restored / Dismissed / Errored) | 🟢 | Exhaustive switch verified in tests |
+| `PaywallKit.show(...)` skeleton (returns dummy `PaywallDismissed`) | 🟢 | Fires onView + onDismiss, asserts non-empty products |
+| Locale-aware price formatter helper | 🟢 | `formatPaywallPrice` + `computeSavingsPercent` |
+| Unit tests for models + theme (target 20+) | 🟢 | 33 tests passing |
+
+**Phase 1 verification (DoD):**
+- ✅ API contract frozen — no more changes to `PaywallProduct`, `PaywallCopy`, `PaywallResult`, `PaywallTheme` constructors without bumping major version
+- ✅ 33 tests on models + theme
+- ✅ `flutter analyze` → 0 issues
+- ✅ All public APIs have dartdoc comments
+
+**Features delivered:** F-CORE-01..07, F-L10N-03, F-L10N-04
+
+**Commit:** Phase 1 work in commits 2–3 on `main`.
 
 ---
 
@@ -138,3 +156,4 @@ Living document. Update at the end of every working session.
 > Append a brief note after every working session. Date · what was done · what's next.
 
 - **2026-05-28 (PM)** — Project kickoff. Created `FEATURES.md`, `PHASES.md`, `TRACKER.md`, `CLAUDE.md`. **Phase 0 complete** in ~20 min: scaffold + strict lints + folder structure + first commit (`f54da2c`). `flutter analyze` 0 issues, 1 test passing. **Next:** Phase 1 — Core API + Theme (~1 day).
+- **2026-05-28 (PM)** — **Phase 1 complete** in ~1 hr (vs 1-day estimate). Built `PaywallProduct`, `PaywallCopy`, `PaywallResult` (sealed union), `PaywallVariant`/`PaywallPeriod` enums, `PaywallTheme.brand` + `.fromTheme`, `formatPaywallPrice` + `computeSavingsPercent` helpers, `PaywallKit.show` skeleton. **33 tests passing**, analyzer 0 issues, all dartdoc'd. API contract is now frozen. **Next:** Phase 2 — Variants 1–4 (Carousel, Comparison, Trial-toggle, Lifetime). ~2.5 days estimate.
