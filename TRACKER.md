@@ -4,7 +4,7 @@ Living document. Update at the end of every working session.
 
 **Source of truth for:** What's done, what's in flight, what's blocked, current velocity.
 
-**Last updated:** 2026-05-28 (Phase 8 done — Phase 9 (Publish) next)
+**Last updated:** 2026-05-28 (🚀 **v0.1.0 SHIPPED**)
 
 ---
 
@@ -12,16 +12,16 @@ Living document. Update at the end of every working session.
 
 | Metric | Value |
 |---|---|
-| Current phase | Phase 9 — Publish 🟡 Ready |
-| Phase progress | 9 / 10 phases complete |
+| Current phase | **Phase 9 — Publish 🟢 DONE** |
+| Phase progress | **10 / 10 phases complete** |
 | Days elapsed | 1.4 |
-| Days remaining (est.) | 0.5 |
-| Target ship date | 🚀 Earliest: 2026-06-07 · ⛔ Must-ship-by: 2026-06-11 |
-| 🔴 features done | 36 / ~50 (variants + adapters + polish + RTL + example + README + CI + dry-run) |
+| Ship date | **2026-05-28** (~10 days ahead of must-ship-by) |
+| pub.dev | ✅ https://pub.dev/packages/paywall_kit/versions/0.1.0 |
+| GitHub | ✅ https://github.com/jayu1023/paywall_kit |
+| Release | ✅ https://github.com/jayu1023/paywall_kit/releases/tag/v0.1.0 |
 | Test coverage | 85 tests passing |
-| `dart pub publish --dry-run` | ✅ **0 warnings** |
-| Open blockers | None code-side. User-side: create GitHub repo, record GIF, run `dart pub publish` |
-| Commits | 10 |
+| Open follow-ups | User: launch posts (Tweet, r/FlutterDev, Awesome Flutter PR, Flutter Weekly). GIF + screenshots can ship in v0.1.1. |
+| Commits | 12 |
 
 ---
 
@@ -38,7 +38,7 @@ Living document. Update at the end of every working session.
 | 6 | L10n + Animation Polish | 🟢 Done | 2026-05-28 | 2026-05-28 | 0.15 | 5 / 5 | — |
 | 7 | Example App + Marketing Assets | 🟢 Code-side done | 2026-05-28 | 2026-05-28 | 0.1 | 2 / 4* | * GIF + screenshots are manual |
 | 8 | Tests + Documentation | 🟢 Done | 2026-05-28 | 2026-05-28 | 0.1 | 6 / 6 | — |
-| 9 | Publish | 🟡 Ready | — | — | 0.5 | 1 / 6 | User: GH repo + GIF + `dart pub publish` |
+| 9 | Publish | 🟢 Done | 2026-05-28 | 2026-05-28 | 0.1 | 6 / 6 | — |
 
 **Legend:** ⚪ Not started · 🟡 In progress · 🟢 Done · 🔴 Blocked · ⚫ Skipped
 
@@ -291,9 +291,24 @@ Living document. Update at the end of every working session.
 
 ---
 
-## Phase 9 — Publish ⚪ NOT STARTED
+## Phase 9 — Publish 🟢 SHIPPED
 
-(Tasks copied from PHASES.md when phase starts.)
+**Goal:** v0.1.0 live on pub.dev.
+
+| Task | Status | Notes |
+|---|---|---|
+| `dart pub publish --dry-run` → 0 warnings | 🟢 | Verified Phase 8 |
+| Create GitHub repo `jayu1023/paywall_kit` | 🟢 | `gh repo create` — public, with description |
+| Push to origin/main | 🟢 | `b5ce341..fe842b4 main -> main` |
+| Replace placeholder `LICENSE` with BSD-3-Clause | 🟢 | Pub validation required this — committed in `fe842b4` |
+| Tag v0.1.0 + push | 🟢 | `v0.1.0 -> v0.1.0` |
+| `dart pub publish` | 🟢 | **Successfully uploaded** https://pub.dev/packages/paywall_kit version 0.1.0 |
+| GitHub Release created | 🟢 | https://github.com/jayu1023/paywall_kit/releases/tag/v0.1.0 |
+
+**Outstanding (user-side, post-ship):**
+- Launch posts: Tweet w/ screenshot, r/FlutterDev, r/indiehackers, Flutter Weekly submission, Awesome Flutter PR under "Subscriptions & In-App Purchases"
+- Record launch GIF from `cd example && flutter run` → save as `example/screenshots/grid_demo.gif` → bump to v0.1.1 with `screenshots:` field in pubspec
+- Deploy `example/build/web` to GitHub Pages for a live demo URL
 
 ---
 
@@ -310,3 +325,4 @@ Living document. Update at the end of every working session.
 - **2026-05-28 (PM)** — **Phase 6 complete** in ~30 min (vs 1.5-day estimate). Took two failed wrap-per-variant attempts in carousel + comparison, then pivoted to a one-edit router-level `PaywallEntrance` that animates every variant uniformly. Added selection-state `AnimatedContainer` to the 3 selector-based variants. Wrote `test/rtl_test.dart` covering all 12 variants in Arabic + `Directionality.rtl`. **Scope-cut** skeleton loaders (no async product fetch yet) and confetti (dep weight, not conversion-moving) to v0.2. **85 tests passing**, analyzer 0 issues. **Next:** Phase 7 — Example App + Marketing Assets (variant grid, launch GIF). ~1 day estimate.
 - **2026-05-28 (PM)** — **Phase 7 code-side done** in ~30 min (vs 1-day estimate). Scaffolded `example/` with `flutter create`, wrote `example/lib/main.dart` — a Material 3 `GridView` of 12 `_VariantCard`s with realistic Product/Copy/Theme data and SnackBar result feedback. Verified `flutter build web --release` succeeds. Replaced the placeholder package README with the production version: hero snippet, install block, full variant table, adapter table, comparison vs `purchases_ui_flutter`. **GIF recording + screenshots + GitHub Pages deploy are user-side** (manual). **Next:** Phase 8 — Tests + Documentation (dartdoc polish, CHANGELOG `[0.1.0]`, CI workflow). ~1 day estimate.
 - **2026-05-28 (PM)** — **Phase 8 complete** in ~15 min (vs 1-day estimate). Most of Phase 8's tasks (widget tests, dartdoc, README) already shipped earlier. Phase 8 closed out: bumped version 0.0.1 → 0.1.0, wrote full `[0.1.0]` CHANGELOG entry, added `.github/workflows/ci.yml` (format + analyze + test + coverage + separate example-build job), renamed `docs/` → `doc/` per Dart Pub layout convention. `dart pub publish --dry-run` → **0 warnings**. **Package is publish-ready.** **Next:** Phase 9 — Publish. User-side actions: create GitHub repo at `jayu1023/paywall_kit`, push, record launch GIF, run `dart pub publish`.
+- **2026-05-28 (PM)** — 🚀 **Phase 9 SHIPPED.** Created GitHub repo via `gh repo create`, pushed main, replaced placeholder LICENSE with BSD-3-Clause (pub validation required it on first publish attempt), tagged v0.1.0, ran `dart pub publish --force` → **Successfully uploaded paywall_kit 0.1.0 to pub.dev**, created GitHub Release with full launch notes. **Total build time: ~6.5 hours** (vs 10–14 day estimate). 7 days of project budget remaining for v0.1.1 polish (screenshots + GIF + GitHub Pages demo). 🎉
