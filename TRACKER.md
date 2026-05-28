@@ -4,7 +4,7 @@ Living document. Update at the end of every working session.
 
 **Source of truth for:** What's done, what's in flight, what's blocked, current velocity.
 
-**Last updated:** 2026-05-28 (Phase 4 done — Phase 5 next)
+**Last updated:** 2026-05-28 (Phase 5 done — Phase 6 next)
 
 ---
 
@@ -12,15 +12,15 @@ Living document. Update at the end of every working session.
 
 | Metric | Value |
 |---|---|
-| Current phase | Phase 5 — Backend Adapters ⚪ Next |
-| Phase progress | 5 / 10 phases complete |
-| Days elapsed | 0.8 |
-| Days remaining (est.) | ~4–7 |
+| Current phase | Phase 6 — L10n + Animation Polish ⚪ Next |
+| Phase progress | 6 / 10 phases complete |
+| Days elapsed | 1.0 |
+| Days remaining (est.) | ~3–5 |
 | Target ship date | 🚀 Earliest: 2026-06-07 · ⛔ Must-ship-by: 2026-06-11 |
-| 🔴 features done | 21 / ~50 (**12 / 12 variants shipping** 🎉) |
-| Test coverage | 68 tests passing |
+| 🔴 features done | 27 / ~50 (12 / 12 variants + Preview/IAP adapters + scope) |
+| Test coverage | 73 tests passing |
 | Open blockers | None |
-| Commits | 6 |
+| Commits | 7 |
 
 ---
 
@@ -33,8 +33,8 @@ Living document. Update at the end of every working session.
 | 2 | Variants 1–4 (Carousel, Comparison, Trial, Lifetime) | 🟢 Done | 2026-05-28 | 2026-05-28 | 0.15 | 6 / 6 | — |
 | 3 | Variants 5–8 (Soft, Hard, Win-back, Family) | 🟢 Done | 2026-05-28 | 2026-05-28 | 0.1 | 5 / 5 | — |
 | 4 | Variants 9–12 (Minimal, Storytelling, Gamified, Reverse) | 🟢 Done | 2026-05-28 | 2026-05-28 | 0.1 | 6 / 6 | — |
-| 5 | Backend Adapters (IAP + RevenueCat) | ⚪ Not started | — | — | 2 | 0 / 6 | — |
-| 6 | L10n + Animation Polish | ⚪ Not started | — | — | 1.5 | 0 / 5 | Phase 5 |
+| 5 | Backend Adapters (IAP + RevenueCat) | 🟢 Done | 2026-05-28 | 2026-05-28 | 0.2 | 6 / 6 | — |
+| 6 | L10n + Animation Polish | ⚪ Not started | — | — | 1.5 | 0 / 5 | — |
 | 7 | Example App + Marketing Assets | ⚪ Not started | — | — | 1 | 0 / 4 | Phase 6 |
 | 8 | Tests + Documentation | ⚪ Not started | — | — | 1 | 0 / 6 | Phase 7 |
 | 9 | Publish | ⚪ Not started | — | — | 0.5 | 0 / 6 | Phase 8 |
@@ -182,9 +182,35 @@ Living document. Update at the end of every working session.
 
 ---
 
-## Phase 5 — Backend Adapters ⚪ NOT STARTED
+## Phase 5 — Backend Adapters 🟢 COMPLETE
 
-(Tasks copied from PHASES.md when phase starts.)
+**Goal:** Real purchases work via `in_app_purchase` and (optionally) RevenueCat.
+
+| Task | Status | Notes |
+|---|---|---|
+| `PaywallAdapter` abstract class (`buy`, `restore`) | 🟢 | Both methods must not throw — return `PaywallErrored` |
+| `PreviewAdapter` (no-op, default) | 🟢 | Preserves Phase 2-4 instant-buy behavior |
+| `IapAdapter` — wraps `in_app_purchase` | 🟢 | Stream-lifecycle, completion, error mapping, optional consumable flag |
+| `CustomAdapter` interface (RevenueCat / Stripe etc.) | 🟢 | Doc + working RevenueCat example in `docs/ADAPTERS.md` |
+| `PaywallScope` InheritedWidget for adapter injection | 🟢 | Variants resolve via `PaywallScope.of(context).adapter` |
+| Wire `adapter:` parameter into `PaywallKit.show` | 🟢 | Defaults to `const PreviewAdapter()` |
+| Restore button wired to adapter | 🟢 | `PaywallRestoreButton` is now Stateful w/ spinner |
+| `PaywallPrimaryButton` async-capable w/ spinner | 🟢 | `FutureOr<void>` onPressed, busy state |
+| All 12 variants dispatch via `adapter.buy` | 🟢 | CTA handlers now `Future<void>`, mounted-guarded |
+
+**Phase 5 verification (DoD):**
+- ✅ Custom adapter is consulted (verified in `paywall_scope_test.dart`)
+- ✅ Restore button calls `adapter.restore()` (verified in test)
+- ✅ Spinner appears during async buy (visual; `_busy` state in button)
+- ✅ `flutter analyze` → 0 issues
+- ✅ `flutter test` → 73 passing (68 + 5 new)
+
+**Features delivered:** F-ADAPT-01..04, F-RESTORE-01..02
+
+**Notes:**
+- `IapAdapter` is implemented but not integration-tested. Live IAP testing requires sandbox accounts / signed builds and lives outside the unit-test suite.
+- RC adapter ships as a recipe in `docs/ADAPTERS.md` — no `purchases_flutter` dep is added to paywall_kit. Users adopt the recipe in their own app.
+- Phase 2's existing variant tests still pass because they didn't pass `adapter:`; `PreviewAdapter` (the default) returns `PaywallPurchased` instantly, matching the old behavior.
 
 ---
 
@@ -221,3 +247,4 @@ Living document. Update at the end of every working session.
 - **2026-05-28 (PM)** — **Phase 2 complete** in ~1.5 hrs (vs 2.5-day estimate). Built 4 variants (Carousel, Comparison, TrialToggle, Lifetime) + shared internal widgets in `_common.dart` + Navigator-based variant routing in `PaywallKit.show`. Added `_ComingSoonVariant` placeholder for the other 8 variants so the router stays exhaustive. **46 tests passing**, analyzer 0 issues. One Phase 1 test was rewritten to match the new Navigator-based behavior. **Next:** Phase 3 — Variants 5–8 (Soft, Hard, Win-back, Family). ~2 days estimate.
 - **2026-05-28 (PM)** — **Phase 3 complete** in ~45 min (vs 2-day estimate). Built 4 more variants (Soft, Hard, Win-back, Family) and extended `_PaywallRouter` switch to cover them. Each variant follows the standalone-widget pattern — no shared base class, only the 4 helper widgets from `_common.dart`. **58 tests passing**, analyzer 0 issues. **8 / 12 variants now shipping**. **Next:** Phase 4 — Variants 9–12 (Minimal, Storytelling, Gamified, Reverse-trial). ~2 days estimate.
 - **2026-05-28 (PM)** — **Phase 4 complete** in ~50 min (vs 2-day estimate). Built final 4 variants (Minimal, Storytelling, Gamified, ReverseTrial) and made the router switch exhaustive. Added `PaywallTestimonial` model + `testimonials` and `socialProof` fields to PaywallCopy (additive). **68 tests passing**, analyzer 0 issues. 🎉 **All 12 variants live.** **Next:** Phase 5 — Backend Adapters (IAP + RevenueCat + Custom). ~2 days estimate.
+- **2026-05-28 (PM)** — **Phase 5 complete** in ~1.5 hrs (vs 2-day estimate). Built the adapter layer: abstract `PaywallAdapter`, default `PreviewAdapter` (no-op), `IapAdapter` wrapping `in_app_purchase`, `PaywallScope` InheritedWidget. Made `PaywallPrimaryButton` + `PaywallRestoreButton` async w/ spinners. Updated all 12 variants to dispatch buy via the adapter. Wrote `docs/ADAPTERS.md` with full RC recipe + Stripe skeleton + FakeAdapter test pattern. **73 tests passing**, analyzer 0 issues. **Next:** Phase 6 — L10n + Animation Polish. ~1.5 days estimate.
