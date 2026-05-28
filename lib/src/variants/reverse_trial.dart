@@ -211,7 +211,9 @@ class _ProductChip extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(20),
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOut,
           padding: const EdgeInsets.symmetric(
             horizontal: 14,
             vertical: 10,

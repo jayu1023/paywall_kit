@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../adapters/paywall_adapter.dart';
 import '../adapters/paywall_scope.dart';
 import '../adapters/preview_adapter.dart';
+import '../animation/entrance.dart';
 import '../theme/paywall_theme.dart';
 import '../variants/carousel.dart';
 import '../variants/comparison.dart';
@@ -129,7 +130,8 @@ class _PaywallRouter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return switch (variant) {
+    return PaywallEntrance(
+      child: switch (variant) {
       PaywallVariant.carousel => CarouselVariant(
           theme: theme,
           copy: copy,
@@ -202,6 +204,7 @@ class _PaywallRouter extends StatelessWidget {
           products: products,
           onCtaTap: onCtaTap,
         ),
-    };
+      },
+    );
   }
 }

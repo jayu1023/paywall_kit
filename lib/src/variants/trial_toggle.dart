@@ -246,7 +246,9 @@ class _ToggleOption extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: theme.cardRadius,
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOut,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             borderRadius: theme.cardRadius,
