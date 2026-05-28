@@ -1,6 +1,6 @@
 name: paywall_kit
 description: 12 conversion-optimized, drop-in Flutter paywall screens. Backend-agnostic — in_app_purchase or RevenueCat with one flag.
-version: 0.0.1
+version: 0.1.0
 homepage: https://github.com/jayu1023/paywall_kit
 repository: https://github.com/jayu1023/paywall_kit
 issue_tracker: https://github.com/jayu1023/paywall_kit/issues

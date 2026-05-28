@@ -10,7 +10,7 @@ import '../core/paywall_result.dart';
 ///     App Store / Play Store purchases.
 ///
 /// For RevenueCat, Stripe, Paddle, or anything else, implement this
-/// interface in your app. See `docs/ADAPTERS.md` for a complete
+/// interface in your app. See `doc/ADAPTERS.md` for a complete
 /// RevenueCat example.
 abstract class PaywallAdapter {
   /// Creates an adapter.

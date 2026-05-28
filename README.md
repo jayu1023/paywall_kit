@@ -58,13 +58,13 @@ Run the example app to tap through every variant: `cd example && flutter run`.
 |---|---|
 | `PreviewAdapter` *(default)* | Design / preview / when you handle purchases yourself in `onPurchaseSuccess`. Returns `PaywallPurchased` instantly. |
 | `IapAdapter` | Native App Store / Google Play via `package:in_app_purchase`. |
-| Your own | Implement `PaywallAdapter` for RevenueCat, Stripe, Paddle, etc. See [`docs/ADAPTERS.md`](docs/ADAPTERS.md) for a complete RevenueCat example. |
+| Your own | Implement `PaywallAdapter` for RevenueCat, Stripe, Paddle, etc. See [`doc/ADAPTERS.md`](doc/ADAPTERS.md) for a complete RevenueCat example. |
 
 ```dart
 // IAP
 adapter: IapAdapter()
 
-// Custom (RevenueCat shown in docs/ADAPTERS.md)
+// Custom (RevenueCat shown in doc/ADAPTERS.md)
 adapter: const RevenueCatAdapter()
 
 // Preview (default)
