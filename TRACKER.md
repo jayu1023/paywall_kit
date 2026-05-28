@@ -4,7 +4,7 @@ Living document. Update at the end of every working session.
 
 **Source of truth for:** What's done, what's in flight, what's blocked, current velocity.
 
-**Last updated:** 2026-05-28 (Phase 5 done — Phase 6 next)
+**Last updated:** 2026-05-28 (Phase 6 done — Phase 7 next)
 
 ---
 
@@ -12,15 +12,15 @@ Living document. Update at the end of every working session.
 
 | Metric | Value |
 |---|---|
-| Current phase | Phase 6 — L10n + Animation Polish ⚪ Next |
-| Phase progress | 6 / 10 phases complete |
-| Days elapsed | 1.0 |
-| Days remaining (est.) | ~3–5 |
+| Current phase | Phase 7 — Example App + Marketing Assets ⚪ Next |
+| Phase progress | 7 / 10 phases complete |
+| Days elapsed | 1.2 |
+| Days remaining (est.) | ~2–3 |
 | Target ship date | 🚀 Earliest: 2026-06-07 · ⛔ Must-ship-by: 2026-06-11 |
-| 🔴 features done | 27 / ~50 (12 / 12 variants + Preview/IAP adapters + scope) |
-| Test coverage | 73 tests passing |
+| 🔴 features done | 30 / ~50 (variants + adapters + polish + RTL all done) |
+| Test coverage | 85 tests passing |
 | Open blockers | None |
-| Commits | 7 |
+| Commits | 8 |
 
 ---
 
@@ -34,8 +34,8 @@ Living document. Update at the end of every working session.
 | 3 | Variants 5–8 (Soft, Hard, Win-back, Family) | 🟢 Done | 2026-05-28 | 2026-05-28 | 0.1 | 5 / 5 | — |
 | 4 | Variants 9–12 (Minimal, Storytelling, Gamified, Reverse) | 🟢 Done | 2026-05-28 | 2026-05-28 | 0.1 | 6 / 6 | — |
 | 5 | Backend Adapters (IAP + RevenueCat) | 🟢 Done | 2026-05-28 | 2026-05-28 | 0.2 | 6 / 6 | — |
-| 6 | L10n + Animation Polish | ⚪ Not started | — | — | 1.5 | 0 / 5 | — |
-| 7 | Example App + Marketing Assets | ⚪ Not started | — | — | 1 | 0 / 4 | Phase 6 |
+| 6 | L10n + Animation Polish | 🟢 Done | 2026-05-28 | 2026-05-28 | 0.15 | 5 / 5 | — |
+| 7 | Example App + Marketing Assets | ⚪ Not started | — | — | 1 | 0 / 4 | — |
 | 8 | Tests + Documentation | ⚪ Not started | — | — | 1 | 0 / 6 | Phase 7 |
 | 9 | Publish | ⚪ Not started | — | — | 0.5 | 0 / 6 | Phase 8 |
 
@@ -214,9 +214,32 @@ Living document. Update at the end of every working session.
 
 ---
 
-## Phase 6 — L10n + Animation Polish ⚪ NOT STARTED
+## Phase 6 — L10n + Animation Polish 🟢 COMPLETE
 
-(Tasks copied from PHASES.md when phase starts.)
+**Goal:** RTL-safe, animation polished, ready for screenshot grid.
+
+| Task | Status | Notes |
+|---|---|---|
+| Test all 12 variants in Arabic (RTL) | 🟢 | `test/rtl_test.dart` exercises every variant in `Directionality.rtl` with Arabic copy |
+| Polish entrance animations | 🟢 | `PaywallEntrance` widget (fade + slide-up, 280ms) wraps every variant via the router — single-file implementation |
+| Skeleton loaders while products load | ⚫ | Scope-cut to v0.2 — v0.1 takes pre-fetched products; skeletons only matter once adapter has `fetchProducts` |
+| Confetti on success (off by default) | ⚫ | Scope-cut to v0.2 — adds dep weight, doesn't move conversion |
+| Toggle animations | 🟢 | `_ProductCard` (comparison), `_ToggleOption` (trial), `_ProductChip` (reverse-trial) now use `AnimatedContainer` (180ms easeOut) |
+
+**Phase 6 verification (DoD):**
+- ✅ All 12 variants render polished in light/dark/RTL
+- ✅ RTL test exercises every variant with Arabic copy (12 new tests)
+- ✅ Selection feedback is smooth on the 3 selector-based variants
+- ✅ `flutter analyze` → 0 issues
+- ✅ `flutter test` → 85 passing (73 + 12 RTL)
+
+**Features delivered:** F-ANIM-01 (entrance), F-ANIM-04 (toggle), F-L10N-01 (translatable), F-L10N-02 (RTL)
+**Features deferred:** F-ANIM-02 (confetti), F-ANIM-03 (skeleton loaders) — both to v0.2
+
+**Notes:**
+- Entrance animation lives at the router level (`lib/src/core/paywall_kit.dart`), wrapping every variant uniformly. Single edit, zero variant churn.
+- RTL was a happy path — Flutter's default widgets (`Row`, `Column`, `Padding`) are direction-aware. Conventional `Alignment.topRight` for close button is intentional (matches Apple HIG for RTL apps).
+- Material localization warning suppressed by not setting `locale:` on `MaterialApp` in the RTL test; `Directionality.rtl` alone drives layout.
 
 ---
 
@@ -248,3 +271,4 @@ Living document. Update at the end of every working session.
 - **2026-05-28 (PM)** — **Phase 3 complete** in ~45 min (vs 2-day estimate). Built 4 more variants (Soft, Hard, Win-back, Family) and extended `_PaywallRouter` switch to cover them. Each variant follows the standalone-widget pattern — no shared base class, only the 4 helper widgets from `_common.dart`. **58 tests passing**, analyzer 0 issues. **8 / 12 variants now shipping**. **Next:** Phase 4 — Variants 9–12 (Minimal, Storytelling, Gamified, Reverse-trial). ~2 days estimate.
 - **2026-05-28 (PM)** — **Phase 4 complete** in ~50 min (vs 2-day estimate). Built final 4 variants (Minimal, Storytelling, Gamified, ReverseTrial) and made the router switch exhaustive. Added `PaywallTestimonial` model + `testimonials` and `socialProof` fields to PaywallCopy (additive). **68 tests passing**, analyzer 0 issues. 🎉 **All 12 variants live.** **Next:** Phase 5 — Backend Adapters (IAP + RevenueCat + Custom). ~2 days estimate.
 - **2026-05-28 (PM)** — **Phase 5 complete** in ~1.5 hrs (vs 2-day estimate). Built the adapter layer: abstract `PaywallAdapter`, default `PreviewAdapter` (no-op), `IapAdapter` wrapping `in_app_purchase`, `PaywallScope` InheritedWidget. Made `PaywallPrimaryButton` + `PaywallRestoreButton` async w/ spinners. Updated all 12 variants to dispatch buy via the adapter. Wrote `docs/ADAPTERS.md` with full RC recipe + Stripe skeleton + FakeAdapter test pattern. **73 tests passing**, analyzer 0 issues. **Next:** Phase 6 — L10n + Animation Polish. ~1.5 days estimate.
+- **2026-05-28 (PM)** — **Phase 6 complete** in ~30 min (vs 1.5-day estimate). Took two failed wrap-per-variant attempts in carousel + comparison, then pivoted to a one-edit router-level `PaywallEntrance` that animates every variant uniformly. Added selection-state `AnimatedContainer` to the 3 selector-based variants. Wrote `test/rtl_test.dart` covering all 12 variants in Arabic + `Directionality.rtl`. **Scope-cut** skeleton loaders (no async product fetch yet) and confetti (dep weight, not conversion-moving) to v0.2. **85 tests passing**, analyzer 0 issues. **Next:** Phase 7 — Example App + Marketing Assets (variant grid, launch GIF). ~1 day estimate.
