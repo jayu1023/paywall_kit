@@ -4,9 +4,13 @@ import '../theme/paywall_theme.dart';
 import '../variants/carousel.dart';
 import '../variants/comparison.dart';
 import '../variants/family.dart';
+import '../variants/gamified.dart';
 import '../variants/hard.dart';
 import '../variants/lifetime.dart';
+import '../variants/minimal.dart';
+import '../variants/reverse_trial.dart';
 import '../variants/soft.dart';
+import '../variants/storytelling.dart';
 import '../variants/trial_toggle.dart';
 import '../variants/winback.dart';
 import 'paywall_copy.dart';
@@ -41,9 +45,7 @@ class PaywallKit {
   /// restores, dismisses, or the purchase fails. The optional callbacks
   /// fire alongside the returned value.
   ///
-  /// As of Phase 2, the four variants `carousel`, `comparison`,
-  /// `trialToggle`, and `lifetime` are implemented. The remaining 8
-  /// variants render a "coming soon" placeholder until Phases 3–4 land.
+  /// All 12 variants are implemented as of Phase 4.
   static Future<PaywallResult> show(
     BuildContext context, {
     required PaywallVariant variant,
@@ -86,8 +88,8 @@ class PaywallKit {
       case PaywallDismissed():
         onDismiss?.call();
       case PaywallRestored():
-        // Restored is not specifically wired in Phase 2; adapter work
-        // in Phase 5 will plumb this through.
+        // Restore-purchase plumbing lands with the adapter work in
+        // Phase 5; for now the result type round-trips through the API.
         break;
     }
     return outcome;
@@ -95,8 +97,7 @@ class PaywallKit {
 }
 
 /// Internal: dispatches the active [PaywallVariant] to the corresponding
-/// widget. Unimplemented variants render a coming-soon placeholder so the
-/// router is exhaustive even before all 12 ship.
+/// widget. Exhaustive over all 12 enum values.
 class _PaywallRouter extends StatelessWidget {
   const _PaywallRouter({
     required this.variant,
@@ -163,63 +164,30 @@ class _PaywallRouter extends StatelessWidget {
           products: products,
           onCtaTap: onCtaTap,
         ),
-      _ => _ComingSoonVariant(variant: variant, theme: theme),
+      PaywallVariant.minimal => MinimalVariant(
+          theme: theme,
+          copy: copy,
+          products: products,
+          onCtaTap: onCtaTap,
+        ),
+      PaywallVariant.storytelling => StorytellingVariant(
+          theme: theme,
+          copy: copy,
+          products: products,
+          onCtaTap: onCtaTap,
+        ),
+      PaywallVariant.gamified => GamifiedVariant(
+          theme: theme,
+          copy: copy,
+          products: products,
+          onCtaTap: onCtaTap,
+        ),
+      PaywallVariant.reverseTrial => ReverseTrialVariant(
+          theme: theme,
+          copy: copy,
+          products: products,
+          onCtaTap: onCtaTap,
+        ),
     };
-  }
-}
-
-class _ComingSoonVariant extends StatelessWidget {
-  const _ComingSoonVariant({required this.variant, required this.theme});
-
-  final PaywallVariant variant;
-  final PaywallTheme theme;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: theme.background,
-      appBar: AppBar(
-        backgroundColor: theme.background,
-        foregroundColor: theme.onSurface,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => Navigator.of(context).pop(
-            const PaywallDismissed(),
-          ),
-        ),
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.construction,
-                size: 64,
-                color: theme.primary,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                '${variant.name} variant — coming soon',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: theme.onSurface,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Lands in a future Phase. See PHASES.md.',
-                style: TextStyle(
-                  color: theme.onSurface.withValues(alpha: 0.7),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }

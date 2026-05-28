@@ -11,6 +11,7 @@ export 'src/core/paywall_kit.dart';
 export 'src/core/paywall_period.dart';
 export 'src/core/paywall_product.dart';
 export 'src/core/paywall_result.dart';
+export 'src/core/paywall_testimonial.dart';
 export 'src/core/paywall_variant.dart';
 export 'src/core/price_formatter.dart';
 export 'src/theme/paywall_theme.dart';

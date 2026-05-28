@@ -1,3 +1,5 @@
+import 'paywall_testimonial.dart';
+
 /// All user-facing strings on a paywall.
 ///
 /// Translation-ready: every string the user sees is sourced from this
@@ -14,6 +16,8 @@ class PaywallCopy {
     this.finePrint,
     this.privacyPolicyUrl,
     this.termsOfServiceUrl,
+    this.testimonials = const <PaywallTestimonial>[],
+    this.socialProof,
   });
 
   /// The big headline at the top of the screen (e.g.
@@ -48,6 +52,13 @@ class PaywallCopy {
   /// Terms of service URL — opens in browser on tap.
   final String? termsOfServiceUrl;
 
+  /// Optional customer testimonials shown by the storytelling variant.
+  final List<PaywallTestimonial> testimonials;
+
+  /// Optional social-proof line (e.g. `'Trusted by 50,000+ indie devs'`).
+  /// Rendered by the storytelling and gamified variants.
+  final String? socialProof;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -60,7 +71,9 @@ class PaywallCopy {
           other.restoreText == restoreText &&
           other.finePrint == finePrint &&
           other.privacyPolicyUrl == privacyPolicyUrl &&
-          other.termsOfServiceUrl == termsOfServiceUrl;
+          other.termsOfServiceUrl == termsOfServiceUrl &&
+          _listEquals(other.testimonials, testimonials) &&
+          other.socialProof == socialProof;
 
   @override
   int get hashCode => Object.hash(
@@ -73,6 +86,8 @@ class PaywallCopy {
         finePrint,
         privacyPolicyUrl,
         termsOfServiceUrl,
+        Object.hashAll(testimonials),
+        socialProof,
       );
 }
 

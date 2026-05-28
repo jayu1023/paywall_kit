@@ -47,8 +47,8 @@ void main() {
       // onView fires immediately when the route is pushed.
       expect(viewed, equals(1));
 
-      // Close the placeholder coming-soon route so the future resolves.
-      await tester.tap(find.byIcon(Icons.close));
+      // Close the variant route so the future resolves.
+      await tester.tap(find.byTooltip('Close'));
       await tester.pumpAndSettle();
 
       expect(await pending, isA<PaywallDismissed>());
@@ -84,31 +84,35 @@ void main() {
       expect(caught, isA<AssertionError>());
     });
 
-    testWidgets('unimplemented variant shows "coming soon" placeholder',
-        (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Builder(
-            builder: (context) {
-              return ElevatedButton(
-                onPressed: () {
-                  PaywallKit.show(
+    testWidgets('every variant renders without error', (tester) async {
+      for (final variant in PaywallVariant.values) {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () => PaywallKit.show(
                     context,
-                    variant: PaywallVariant.gamified,
+                    variant: variant,
                     products: const [_product],
                     copy: _copy,
-                  );
-                },
-                child: const Text('show'),
-              );
-            },
+                  ),
+                  child: const Text('show'),
+                );
+              },
+            ),
           ),
-        ),
-      );
-      await tester.tap(find.text('show'));
-      await tester.pumpAndSettle();
-
-      expect(find.textContaining('coming soon'), findsOneWidget);
+        );
+        await tester.tap(find.text('show'));
+        await tester.pumpAndSettle();
+        expect(
+          tester.takeException(),
+          isNull,
+          reason: 'variant $variant threw on render',
+        );
+        await tester.tap(find.byTooltip('Close'));
+        await tester.pumpAndSettle();
+      }
     });
   });
 }
