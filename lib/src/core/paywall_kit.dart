@@ -3,8 +3,12 @@ import 'package:flutter/material.dart';
 import '../theme/paywall_theme.dart';
 import '../variants/carousel.dart';
 import '../variants/comparison.dart';
+import '../variants/family.dart';
+import '../variants/hard.dart';
 import '../variants/lifetime.dart';
+import '../variants/soft.dart';
 import '../variants/trial_toggle.dart';
+import '../variants/winback.dart';
 import 'paywall_copy.dart';
 import 'paywall_product.dart';
 import 'paywall_result.dart';
@@ -130,6 +134,30 @@ class _PaywallRouter extends StatelessWidget {
           onCtaTap: onCtaTap,
         ),
       PaywallVariant.lifetime => LifetimeVariant(
+          theme: theme,
+          copy: copy,
+          products: products,
+          onCtaTap: onCtaTap,
+        ),
+      PaywallVariant.soft => SoftPaywallVariant(
+          theme: theme,
+          copy: copy,
+          products: products,
+          onCtaTap: onCtaTap,
+        ),
+      PaywallVariant.hard => HardPaywallVariant(
+          theme: theme,
+          copy: copy,
+          products: products,
+          onCtaTap: onCtaTap,
+        ),
+      PaywallVariant.winback => WinbackVariant(
+          theme: theme,
+          copy: copy,
+          products: products,
+          onCtaTap: onCtaTap,
+        ),
+      PaywallVariant.family => FamilyPlanVariant(
           theme: theme,
           copy: copy,
           products: products,
