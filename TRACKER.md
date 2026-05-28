@@ -4,7 +4,7 @@ Living document. Update at the end of every working session.
 
 **Source of truth for:** What's done, what's in flight, what's blocked, current velocity.
 
-**Last updated:** 2026-05-28 (Phase 2 done — Phase 3 next)
+**Last updated:** 2026-05-28 (Phase 3 done — Phase 4 next)
 
 ---
 
@@ -12,15 +12,15 @@ Living document. Update at the end of every working session.
 
 | Metric | Value |
 |---|---|
-| Current phase | Phase 3 — Variants 5–8 ⚪ Next |
-| Phase progress | 3 / 10 phases complete |
-| Days elapsed | 0.6 |
-| Days remaining (est.) | ~8–11 |
+| Current phase | Phase 4 — Variants 9–12 ⚪ Next |
+| Phase progress | 4 / 10 phases complete |
+| Days elapsed | 0.7 |
+| Days remaining (est.) | ~6–9 |
 | Target ship date | 🚀 Earliest: 2026-06-07 · ⛔ Must-ship-by: 2026-06-11 |
-| 🔴 features done | 11 / ~50 (4 / 12 variants shipping) |
-| Test coverage | 46 tests passing |
+| 🔴 features done | 15 / ~50 (8 / 12 variants shipping) |
+| Test coverage | 58 tests passing |
 | Open blockers | None |
-| Commits | 4 |
+| Commits | 5 |
 
 ---
 
@@ -31,8 +31,8 @@ Living document. Update at the end of every working session.
 | 0 | Foundation | 🟢 Done | 2026-05-28 | 2026-05-28 | 0.25 | 9 / 9 | — |
 | 1 | Core API + Theme | 🟢 Done | 2026-05-28 | 2026-05-28 | 0.25 | 7 / 7 | — |
 | 2 | Variants 1–4 (Carousel, Comparison, Trial, Lifetime) | 🟢 Done | 2026-05-28 | 2026-05-28 | 0.15 | 6 / 6 | — |
-| 3 | Variants 5–8 (Soft, Hard, Win-back, Family) | ⚪ Not started | — | — | 2 | 0 / 5 | — |
-| 4 | Variants 9–12 (Minimal, Storytelling, Gamified, Reverse) | ⚪ Not started | — | — | 2 | 0 / 6 | Phase 3 |
+| 3 | Variants 5–8 (Soft, Hard, Win-back, Family) | 🟢 Done | 2026-05-28 | 2026-05-28 | 0.1 | 5 / 5 | — |
+| 4 | Variants 9–12 (Minimal, Storytelling, Gamified, Reverse) | ⚪ Not started | — | — | 2 | 0 / 6 | — |
 | 5 | Backend Adapters (IAP + RevenueCat) | ⚪ Not started | — | — | 2 | 0 / 6 | Phase 4 |
 | 6 | L10n + Animation Polish | ⚪ Not started | — | — | 1.5 | 0 / 5 | Phase 5 |
 | 7 | Example App + Marketing Assets | ⚪ Not started | — | — | 1 | 0 / 4 | Phase 6 |
@@ -129,9 +129,27 @@ Living document. Update at the end of every working session.
 
 ---
 
-## Phase 3 — Variants 5–8 ⚪ NOT STARTED
+## Phase 3 — Variants 5–8 🟢 COMPLETE
 
-(Tasks copied from PHASES.md when phase starts.)
+**Goal:** Next 4 variants live (Soft, Hard, Win-back, Family).
+
+| Task | Status | Notes |
+|---|---|---|
+| `SoftPaywallVariant` — primary CTA + "continue with limits" secondary | 🟢 | Falls back to "Continue with limits" when `copy.ctaSecondary` null |
+| `HardPaywallVariant` — onboarding-blocking, dominant CTA | 🟢 | Lock icon hero, 64-px CTA, subtle close (App Store compliant) |
+| `WinbackVariant` — strikethrough original + discount badge | 🟢 | Auto-computes discount %, graceful no-discount fallback |
+| `FamilyPlanVariant` — multi-seat, per-person price | 🟢 | 6-seat default (Apple Family Sharing standard) |
+| Widget tests per variant | 🟢 | 12 widget tests total |
+
+**Phase 3 verification (DoD):**
+- ✅ All 4 variants render correctly
+- ✅ CTA flows return correct `PaywallPurchased`
+- ✅ `flutter analyze` → 0 issues
+- ✅ `flutter test` → 58 passing (46 + 12 new)
+
+**Features delivered:** F-VAR-05..08
+
+**Notes:** 4 of 12 variants remain (Phase 4: minimal, storytelling, gamified, reverseTrial). The `_ComingSoonVariant` placeholder still covers them.
 
 ---
 
@@ -178,3 +196,4 @@ Living document. Update at the end of every working session.
 - **2026-05-28 (PM)** — Project kickoff. Created `FEATURES.md`, `PHASES.md`, `TRACKER.md`, `CLAUDE.md`. **Phase 0 complete** in ~20 min: scaffold + strict lints + folder structure + first commit (`f54da2c`). `flutter analyze` 0 issues, 1 test passing. **Next:** Phase 1 — Core API + Theme (~1 day).
 - **2026-05-28 (PM)** — **Phase 1 complete** in ~1 hr (vs 1-day estimate). Built `PaywallProduct`, `PaywallCopy`, `PaywallResult` (sealed union), `PaywallVariant`/`PaywallPeriod` enums, `PaywallTheme.brand` + `.fromTheme`, `formatPaywallPrice` + `computeSavingsPercent` helpers, `PaywallKit.show` skeleton. **33 tests passing**, analyzer 0 issues, all dartdoc'd. API contract is now frozen. **Next:** Phase 2 — Variants 1–4 (Carousel, Comparison, Trial-toggle, Lifetime). ~2.5 days estimate.
 - **2026-05-28 (PM)** — **Phase 2 complete** in ~1.5 hrs (vs 2.5-day estimate). Built 4 variants (Carousel, Comparison, TrialToggle, Lifetime) + shared internal widgets in `_common.dart` + Navigator-based variant routing in `PaywallKit.show`. Added `_ComingSoonVariant` placeholder for the other 8 variants so the router stays exhaustive. **46 tests passing**, analyzer 0 issues. One Phase 1 test was rewritten to match the new Navigator-based behavior. **Next:** Phase 3 — Variants 5–8 (Soft, Hard, Win-back, Family). ~2 days estimate.
+- **2026-05-28 (PM)** — **Phase 3 complete** in ~45 min (vs 2-day estimate). Built 4 more variants (Soft, Hard, Win-back, Family) and extended `_PaywallRouter` switch to cover them. Each variant follows the standalone-widget pattern — no shared base class, only the 4 helper widgets from `_common.dart`. **58 tests passing**, analyzer 0 issues. **8 / 12 variants now shipping**. **Next:** Phase 4 — Variants 9–12 (Minimal, Storytelling, Gamified, Reverse-trial). ~2 days estimate.
