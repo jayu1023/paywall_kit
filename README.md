@@ -1,34 +1,107 @@
 # paywall_kit
 
-> 🚧 **Pre-release scaffold (v0.0.1).** This package is under active development. First public release: v0.1.0, targeted ship 2026-06-11.
+> **12 conversion-optimized, drop-in Flutter paywall screens.** Backend-agnostic — works with `in_app_purchase` (native, free) or RevenueCat via a single adapter swap. No vendor lock-in.
 
-**12 conversion-optimized, drop-in Flutter paywall screens. Backend-agnostic — `in_app_purchase` or RevenueCat with one flag.**
+[![pub.dev](https://img.shields.io/badge/pub.dev-paywall__kit-blue)](https://pub.dev/packages/paywall_kit) · 0.1.0 ship target
 
 ```dart
-// (planned API — landing in Phase 1)
-PaywallKit.show(
+final result = await PaywallKit.show(
   context,
-  variant: PaywallVariant.lifetimeDeal,
-  products: [monthlyProduct, annualProduct, lifetimeProduct],
-  theme: PaywallTheme.brand(primary: Colors.indigo),
+  variant: PaywallVariant.lifetime,
+  products: [monthly, annual, lifetime],
   copy: PaywallCopy(
     headline: 'Unlock everything',
     features: ['No ads', 'Cloud sync', 'AI assistant'],
   ),
-  onPurchase: (product) async => await iap.buy(product),
+  adapter: IapAdapter(),  // or PreviewAdapter(), or your own
 );
+
+switch (result) {
+  case PaywallPurchased(:final product): grant(product);
+  case PaywallRestored(:final products): restore(products);
+  case PaywallDismissed(): break;
+  case PaywallErrored(:final error): logError(error);
+}
 ```
 
-## What's coming in v0.1.0
+## Install
 
-- 12 hand-crafted paywall variants (Carousel, Comparison, Trial-toggle, Lifetime, Soft, Hard, Win-back, Family, Minimal, Storytelling, Gamified, Reverse-trial)
-- `in_app_purchase` adapter (native, zero vendor lock)
-- RevenueCat adapter (opt-in)
-- Custom adapter interface (Stripe, Paddle, etc.)
-- Fully themeable, RTL-safe, dark-mode ready
-- Locale-aware price formatting
+```yaml
+dependencies:
+  paywall_kit: ^0.1.0
+```
 
-See [PHASES.md](PHASES.md) for the build plan and [FEATURES.md](FEATURES.md) for the full feature catalog.
+## The 12 variants
+
+| Variant | Best for |
+|---|---|
+| `carousel` | Onboarding flows with swipeable feature highlights |
+| `comparison` | Multi-tier offers (Free / Pro / Lifetime) |
+| `trialToggle` | Subscriptions with a free-trial conversion play |
+| `lifetime` | Indie-style one-time-purchase apps |
+| `soft` | Non-blocking nudge with a "continue with limits" escape |
+| `hard` | Onboarding-blocking, no skip |
+| `winback` | Lapsed-subscriber re-engagement with discount |
+| `family` | Family Sharing-compatible multi-seat tier |
+| `minimal` | Pieter Levels aesthetic — single price, single CTA |
+| `storytelling` | Long-scroll with testimonials + social proof |
+| `gamified` | Reward-unlock framing with progress ring |
+| `reverseTrial` | "You're on Pro for 7 days" post-onboarding pattern |
+
+Run the example app to tap through every variant: `cd example && flutter run`.
+
+## Backend adapters
+
+`PaywallAdapter` is the bridge between variants and your purchase system.
+
+| Adapter | When to use |
+|---|---|
+| `PreviewAdapter` *(default)* | Design / preview / when you handle purchases yourself in `onPurchaseSuccess`. Returns `PaywallPurchased` instantly. |
+| `IapAdapter` | Native App Store / Google Play via `package:in_app_purchase`. |
+| Your own | Implement `PaywallAdapter` for RevenueCat, Stripe, Paddle, etc. See [`docs/ADAPTERS.md`](docs/ADAPTERS.md) for a complete RevenueCat example. |
+
+```dart
+// IAP
+adapter: IapAdapter()
+
+// Custom (RevenueCat shown in docs/ADAPTERS.md)
+adapter: const RevenueCatAdapter()
+
+// Preview (default)
+adapter: const PreviewAdapter()
+```
+
+## Theming
+
+```dart
+// One brand color → full theme
+theme: PaywallTheme.brand(primary: Colors.indigo)
+
+// Or inherit from Material's ColorScheme
+theme: PaywallTheme.fromTheme(context)
+
+// Or hand-craft every token
+theme: PaywallTheme(
+  primary: ..., onPrimary: ..., surface: ..., accent: ...,
+  cardRadius: ..., buttonRadius: ..., padding: ...,
+)
+```
+
+Dark mode + RTL (Arabic, Hebrew) work out of the box. Locale-aware price formatting via `intl`.
+
+## Compared to `purchases_ui_flutter`
+
+|  | `purchases_ui_flutter` | **`paywall_kit`** |
+|---|---|---|
+| Variants | 1 customizable template | **12 hand-crafted layouts** |
+| Backend | RevenueCat only | **IAP, RevenueCat, Stripe, custom** |
+| Vendor lock-in | RC dashboard required | **None** |
+| Theming | RC dashboard config | **Code-defined** `PaywallTheme` |
+| Free option | Requires RC project | **Yes** (native `in_app_purchase`) |
+
+## Status
+
+🚧 v0.1.0 ship target: **2026-06-11**. See [`PHASES.md`](PHASES.md) for the build plan and [`TRACKER.md`](TRACKER.md) for current progress.
 
 ## License
 
